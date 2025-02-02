@@ -38,15 +38,13 @@ public class Hilo implements Runnable {
         try {
             DataInputStream dis = new DataInputStream(cliente.getInputStream());
             DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
-            boolean dispo;
+            boolean dispo = true;
             String n = dis.readUTF();
-            dispo = true;
 
-            System.out.println(usuarios.size());
+
             for (int i = 0; i < usuarios.size(); i++) {
                 if (usuarios.get(i).getNombre() != null && usuarios.get(i).getNombre().equalsIgnoreCase(n)) {
                     dispo = false;
-                    System.out.println(usuarios.get(i).getNombre());
                 }
             }
 
@@ -55,9 +53,10 @@ public class Hilo implements Runnable {
                 dos.writeInt(0);
                 try {
                     BufferedReader leer = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+                    BufferedWriter e = new BufferedWriter(new OutputStreamWriter(cliente.getOutputStream()));
+
 
                     String texto = "";
-                    BufferedWriter e = new BufferedWriter(new OutputStreamWriter(cliente.getOutputStream()));
                     enviarMensaje("Nombres");
 
                     for (int i = 0; i < usuarios.size(); i++) {
@@ -86,7 +85,6 @@ public class Hilo implements Runnable {
                         texto = leer.readLine();
                         if(!texto.equals("!F14!")) {
                             enviarMensaje(texto);
-                            System.out.println(puntero);
                             historial[puntero] = texto;
                             if(puntero+1 < 10){
                                 puntero++;
@@ -103,7 +101,6 @@ public class Hilo implements Runnable {
 
             usuarios.remove(this);
             String texto = "";
-            BufferedWriter e = new BufferedWriter(new OutputStreamWriter(cliente.getOutputStream()));
             enviarMensaje("Nombres");
 
             for (int i = 0; i < usuarios.size(); i++) {
@@ -111,7 +108,6 @@ public class Hilo implements Runnable {
             }
 
             enviarMensaje(texto);
-            System.out.println("Adios");
 
         } catch (IOException e) {
             throw new RuntimeException(e);

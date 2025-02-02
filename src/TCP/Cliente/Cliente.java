@@ -68,7 +68,6 @@ public class Cliente extends JDialog implements Runnable{
         try {
             escribir.write("!F14!" + "\n");
             escribir.flush();
-            System.out.println("Hola");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -84,11 +83,6 @@ public class Cliente extends JDialog implements Runnable{
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    private void onOK() {
-
-        dispose();
     }
 
     private void onCancel() {

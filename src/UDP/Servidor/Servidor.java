@@ -21,7 +21,6 @@ public class Servidor {
                 byte[] cadena = new byte[1024];
                 DatagramPacket peticion = new DatagramPacket(cadena, cadena.length);
                 servidor.receive(peticion);
-                System.out.println("Se conecto un cliente\n\n");
 
                 String nombre = "";
                 boolean dispo = true;
@@ -79,11 +78,9 @@ public class Servidor {
                             }
 
                             enviarMensaje(servidor, texto);
-                            System.out.println("ADIOOOOS");
                         }else {
                             texto = new String(peticion.getData(), 0, peticion.getLength());
                             enviarMensaje(servidor, texto);
-                            System.out.println(texto);
                             historial[pos] = texto;
                             if (pos + 1 < 10) {
                                 pos++;
@@ -109,7 +106,6 @@ public class Servidor {
     private static void enviarMensaje(DatagramSocket servidor, String texto) {
         DatagramPacket envio;
 
-        System.out.println(usuarios.size());
         for (String clave: usuarios.keySet()) {
             try {
                 envio = new DatagramPacket(texto.getBytes(), 0, texto.getBytes().length, usuarios.get(clave).getAddress(), usuarios.get(clave).getPort());

@@ -15,7 +15,8 @@ import java.util.ArrayList;
 public class Servidor {
     private static final ArrayList<String> usuarios = new ArrayList<>();
     private static final String DIR = "230.0.0.1";
-    private static final int PORT = 22222;
+    private static final int PORT_MUL = 22222;
+    private static final int PORT_DIR = 1234;
 
     public static void main(String[] args) {
         String[] historial = new String[10];
@@ -23,21 +24,18 @@ public class Servidor {
 
         try {
             InetAddress group = InetAddress.getByName(DIR);
-            MulticastSocket multi = new MulticastSocket(PORT);
-            DatagramSocket servidor = new DatagramSocket(1234);
-
-
+            MulticastSocket multi = new MulticastSocket(PORT_MUL);
+            DatagramSocket servidor = new DatagramSocket(PORT_DIR);
             multi.joinGroup(group);
 
             while (true) {
                 byte[] buffer = new byte[1024];
                 DatagramPacket peticion = new DatagramPacket(buffer, buffer.length);
-
                 servidor.receive(peticion);
                 String accion = new String(peticion.getData(), 0, peticion.getLength()).trim();
+
                 String nombre = "";
                 boolean dispo = true;
-
                 if (accion.equals("/User")) {
                     servidor.receive(peticion);
                     nombre = new String(peticion.getData(), 0, peticion.getLength()).trim();
@@ -45,7 +43,6 @@ public class Servidor {
                     for (String usuario : usuarios) {
                         if (usuario != null && usuario.equalsIgnoreCase(nombre)) {
                             dispo = false;
-                            break;
                         }
                     }
                 }
@@ -75,17 +72,14 @@ public class Servidor {
                         for (String usuario : usuarios) {
                             listaUsuarios += usuario + ",";
                         }
-
-
-                        envio = new DatagramPacket("/Nombres".getBytes(), "/Nombres".getBytes().length, group, PORT);
+                        envio = new DatagramPacket("/Nombres".getBytes(), "/Nombres".getBytes().length, group, PORT_MUL);
                         multi.send(envio);
-                        envio = new DatagramPacket(listaUsuarios.getBytes(), listaUsuarios.getBytes().length, group, PORT);
+                        envio = new DatagramPacket(listaUsuarios.getBytes(), listaUsuarios.getBytes().length, group, PORT_MUL);
                         multi.send(envio);
 
                         envio = new DatagramPacket("/Historial".getBytes(), "/Historial".getBytes().length, peticion.getAddress(), peticion.getPort());
                         servidor.send(envio);
 
-                        System.out.println(usuarios);
                         texto = "BIENVENIDO " + nombre;
                         envio = new DatagramPacket(texto.getBytes(), texto.getBytes().length, peticion.getAddress(), peticion.getPort());
                         servidor.send(envio);
@@ -103,14 +97,6 @@ public class Servidor {
                         }
                         envio = new DatagramPacket("/HistorialFin".getBytes(), "/HistorialFin".getBytes().length, peticion.getAddress(), peticion.getPort());
                         servidor.send(envio);
-
-
-                        for (String mensaje : historial) {
-                            if (mensaje != null) {
-                                envio = new DatagramPacket(mensaje.getBytes(), mensaje.getBytes().length, peticion.getAddress(), peticion.getPort());
-                                multi.send(envio);
-                            }
-                        }
                     } else if (accion.equals("!F14!")) {
                         servidor.receive(peticion);
                         nombre = new String(peticion.getData(), 0, peticion.getLength()).trim();
@@ -121,9 +107,9 @@ public class Servidor {
                             listaUsuarios += usuario + ",";
                         }
 
-                        envio = new DatagramPacket("/Nombres".getBytes(), "/Nombres".getBytes().length, group, PORT);
+                        envio = new DatagramPacket("/Nombres".getBytes(), "/Nombres".getBytes().length, group, PORT_MUL);
                         multi.send(envio);
-                        envio = new DatagramPacket(listaUsuarios.getBytes(), listaUsuarios.getBytes().length, group, PORT);
+                        envio = new DatagramPacket(listaUsuarios.getBytes(), listaUsuarios.getBytes().length, group, PORT_MUL);
                         multi.send(envio);
 
 
@@ -132,7 +118,7 @@ public class Servidor {
                     }else if(accion.equals("/Mensaje")){
                         servidor.receive(peticion);
                         texto = new String(peticion.getData(), 0, peticion.getLength()).trim();
-                        envio = new DatagramPacket(texto.getBytes(), texto.getBytes().length, group, PORT);
+                        envio = new DatagramPacket(texto.getBytes(), texto.getBytes().length, group, PORT_MUL);
                         multi.send(envio);
 
                         historial[pos] = texto;

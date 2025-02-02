@@ -5,11 +5,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
 
-/*
-    https://es.stackoverflow.com/questions/422067/cargar-imagen-al-hacer-clic-en-boton
-    https://stackoverflow.com/questions/9119481/how-to-present-a-simple-alert-message-in-java
-
- */
 public class Cliente extends JDialog {
     private JPanel contentPane;
     private JButton b00;
@@ -21,6 +16,7 @@ public class Cliente extends JDialog {
     private JButton b20;
     private JButton b21;
     private JButton b22;
+    private JLabel juego;
     private  ImageIcon cruz;
     private  ImageIcon circulo;
     private Socket cliente;
@@ -45,13 +41,12 @@ public class Cliente extends JDialog {
 
         try {
             cliente = new Socket("localhost",22222);
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         cruz = new ImageIcon(getClass().getClassLoader().getResource("TresRayaOnline/Fotos/cruz.png"));
         circulo = new ImageIcon(getClass().getClassLoader().getResource("TresRayaOnline/Fotos/circulo.png"));
+
         b00.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 click(b00);
@@ -119,10 +114,6 @@ public class Cliente extends JDialog {
     private void click(JButton b){
         try {
             DataOutputStream salida = new DataOutputStream(cliente.getOutputStream());
-            if(jugador){
-
-            }
-
             salida.writeUTF(b.getName().toString());
 
         } catch (IOException e) {
@@ -144,24 +135,28 @@ public class Cliente extends JDialog {
             DataOutputStream salida = new DataOutputStream(dialog.cliente.getOutputStream());
             String accion = entrada.readUTF();
             dialog.jugador = entrada.readBoolean();
+
+            if(dialog.jugador){
+                dialog.juego.setText("Cruces");
+            }else{
+                dialog.juego.setText("Circulos");
+            }
+
             String res;
             boolean ju;
             while(!accion.equals("/Fin")){
                 accion = entrada.readUTF();
-                System.out.println(accion);
                 if(accion.equals("/Correcto")) {
                     res = entrada.readUTF();
                     ju = entrada.readBoolean();
 
                     res(res,dialog,ju);
-                    System.out.println(res);
 
                     accion = entrada.readUTF();
-                    System.out.println(accion);
                 }else if(accion.equals("/Ocupado")){
-                    JOptionPane.showMessageDialog(null, "La casilla esta llena");
+                    JOptionPane.showMessageDialog(null, "La casilla esta llena","Ocupado",JOptionPane.ERROR_MESSAGE);
                 }else if(accion.equals("/ERRTurno")){
-                    JOptionPane.showMessageDialog(null, "No es tu turno");
+                    JOptionPane.showMessageDialog(null, "No es tu turno","Error turno",JOptionPane.ERROR_MESSAGE);
                 }
             }
 

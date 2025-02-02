@@ -15,6 +15,7 @@ public class Servidor {
 
             while(true){
                 fin = false;
+                turno = true;
                 Integer [][] tablero = new Integer[3][3];
                 for (int i = 0; i < tablero.length; i++) {
                     for (int j = 0; j < tablero[i].length; j++) {

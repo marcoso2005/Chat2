@@ -38,12 +38,12 @@ public class InicioCliente extends JDialog {
                 InetAddress destino = InetAddress.getByName("localhost");
 
 
-                String texto = nombre.getText();
                 byte [] datos = "/User".getBytes();
 
                 DatagramPacket peticion = new DatagramPacket(datos, datos.length, destino, 22222);
                 sCliente.send(peticion);
 
+                String texto = nombre.getText();
                 datos = texto.getBytes();
                 peticion = new DatagramPacket(datos, datos.length, destino, 22222);
                 sCliente.send(peticion);

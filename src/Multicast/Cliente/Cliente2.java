@@ -16,6 +16,8 @@ import java.net.*;
         private DatagramSocket cliente;
         private InetAddress destino;
         private String nombre;
+        private static final int PUERTO_DIR = 1234;
+        private static final int PUERTO_MUL = 22222;
 
         public Cliente2(DatagramSocket cliente, DatagramPacket peticion, String nombre) {
             setContentPane(contentPane);
@@ -55,11 +57,11 @@ import java.net.*;
             try {
                 InetAddress env = InetAddress.getByName("localhost");
                 byte[] mensaje = "!F14!".getBytes();
-                DatagramPacket enviar = new DatagramPacket(mensaje, mensaje.length, env, 1234);
+                DatagramPacket enviar = new DatagramPacket(mensaje, mensaje.length, env, PUERTO_DIR);
                 cliente.send(enviar);
 
                 mensaje = nombre.getBytes();
-                enviar = new DatagramPacket(mensaje, mensaje.length, env, 1234);
+                enviar = new DatagramPacket(mensaje, mensaje.length, env, PUERTO_DIR);
                 cliente.send(enviar);
 
                 cliente.close();
@@ -74,9 +76,9 @@ import java.net.*;
                 try {
                     InetAddress env = InetAddress.getByName("localhost");
                     String mensaje = Mensaje.getText();
-                    DatagramPacket packet = new DatagramPacket("/Mensaje".getBytes(), "/Mensaje".length(), env, 1234);
+                    DatagramPacket packet = new DatagramPacket("/Mensaje".getBytes(), "/Mensaje".length(), env, PUERTO_DIR);
                     cliente.send(packet);
-                    packet = new DatagramPacket(mensaje.getBytes(), mensaje.length(), env, 1234);
+                    packet = new DatagramPacket(mensaje.getBytes(), mensaje.length(), env, PUERTO_DIR);
                     cliente.send(packet);
 
                     Mensaje.setText("");
@@ -89,15 +91,14 @@ import java.net.*;
         @Override
         public void run() {
             try {
-                MulticastSocket multi = new MulticastSocket(22222);
+                MulticastSocket multi = new MulticastSocket(PUERTO_MUL);
                 multi.joinGroup(destino);
 
                 byte[] buffer = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
                 cliente.receive(packet);
                 String texto = new String(packet.getData(),0,packet.getLength());
-                System.out.println(texto);
+
                 if(texto.equals("/Historial")){
                     while(!texto.equals("/HistorialFin")){
                         cliente.receive(packet);
@@ -110,11 +111,8 @@ import java.net.*;
 
 
                 while (true) {
-
-
                     multi.receive(packet);
                     texto = new String(packet.getData(), 0, packet.getLength());
-                    System.out.println(texto);
                     if (texto.equals("/Nombres")) {
                         multi.receive(packet);
                         texto = new String(packet.getData(), 0, packet.getLength());

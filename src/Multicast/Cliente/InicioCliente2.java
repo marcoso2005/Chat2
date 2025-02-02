@@ -37,7 +37,7 @@ public class InicioCliente2 extends JDialog {
         if (!nombre.getText().isEmpty()) {
             try {
                 DatagramSocket sCliente = new DatagramSocket();
-                InetAddress grupo = InetAddress.getByName("localhost"); // Dirección del grupo multicast
+                InetAddress grupo = InetAddress.getByName("localhost");
                 int puerto = 1234;
 
                 String accion = "/User";
@@ -60,7 +60,6 @@ public class InicioCliente2 extends JDialog {
                 if (res == -1) {
                     JOptionPane.showMessageDialog(null, "El nombre ya está en uso", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    System.out.println(res);
                     Cliente2 dialog = new Cliente2(sCliente,peticion,texto);
                     dialog.setDefaultCloseOperation(2);
                     dialog.pack();
